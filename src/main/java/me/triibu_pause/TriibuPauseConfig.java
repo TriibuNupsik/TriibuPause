@@ -11,16 +11,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-public class PauseConfig {
+public class TriibuPauseConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String CONFIG_FILE_NAME = "triibu_pause.json";
-    private static PauseConfig INSTANCE;
+    private static TriibuPauseConfig INSTANCE;
 
     // Configuration options
-    private int pauseWhenEmptySeconds = 1; // Default: 1 second (20 ticks)
+    private int pauseWhenEmptySeconds = 60; // Default: 1 second (20 ticks)
     private boolean enablePauseWhenEmpty = true;
 
-    public static PauseConfig getInstance() {
+    public static TriibuPauseConfig getInstance() {
         if (INSTANCE == null) {
             load();
         }
@@ -37,17 +37,17 @@ public class PauseConfig {
             File configFile = configDir.resolve(CONFIG_FILE_NAME).toFile();
             if (configFile.exists()) {
                 try (FileReader reader = new FileReader(configFile)) {
-                    INSTANCE = GSON.fromJson(reader, PauseConfig.class);
-                    Triibu_pause.LOGGER.info("Loaded config file for Triibu Pause");
+                    INSTANCE = GSON.fromJson(reader, TriibuPauseConfig.class);
+                    TriibuPause.LOGGER.info("Loaded config file for Triibu Pause");
                 }
             } else {
-                INSTANCE = new PauseConfig();
+                INSTANCE = new TriibuPauseConfig();
                 save();
-                Triibu_pause.LOGGER.info("Created default config for Triibu Pause");
+                TriibuPause.LOGGER.info("Created default config for Triibu Pause");
             }
         } catch (IOException e) {
-            Triibu_pause.LOGGER.error("Failed to load config for Triibu Pause", e);
-            INSTANCE = new PauseConfig();
+            TriibuPause.LOGGER.error("Failed to load config for Triibu Pause", e);
+            INSTANCE = new TriibuPauseConfig();
         }
     }
 
@@ -61,10 +61,10 @@ public class PauseConfig {
             File configFile = configDir.resolve(CONFIG_FILE_NAME).toFile();
             try (FileWriter writer = new FileWriter(configFile)) {
                 GSON.toJson(INSTANCE, writer);
-                Triibu_pause.LOGGER.info("Saved config for Triibu Pause");
+                TriibuPause.LOGGER.info("Saved config for Triibu Pause");
             }
         } catch (IOException e) {
-            Triibu_pause.LOGGER.error("Failed to save config for Triibu Pause", e);
+            TriibuPause.LOGGER.error("Failed to save config for Triibu Pause", e);
         }
     }
 

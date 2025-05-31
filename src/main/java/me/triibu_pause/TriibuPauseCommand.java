@@ -8,36 +8,36 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
-public class PauseCommand {
+public class TriibuPauseCommand {
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
         dispatcher.register(
-                CommandManager.literal("triibu_pause")
+                CommandManager.literal("pause")
                         .requires(source -> source.hasPermissionLevel(4)) // Require operator permission
                         .then(CommandManager.literal("reload")
-                                .executes(PauseCommand::reloadConfig))
+                                .executes(TriibuPauseCommand::reloadConfig))
                         .then(CommandManager.literal("set")
                                 .then(CommandManager.literal("enabled")
                                         .then(CommandManager.argument("value", BoolArgumentType.bool())
                                                 .executes(context -> setEnabled(context, BoolArgumentType.getBool(context, "value")))))
-                                .then(CommandManager.literal("interval")
+                                .then(CommandManager.literal("delay")
                                         .then(CommandManager.argument("seconds", IntegerArgumentType.integer(1))
                                                 .executes(context -> setInterval(context, IntegerArgumentType.getInteger(context, "seconds"))))))
                         .then(CommandManager.literal("status")
-                                .executes(PauseCommand::showStatus))
+                                .executes(TriibuPauseCommand::showStatus))
         );
     }
 
     private static int reloadConfig(CommandContext<ServerCommandSource> context) {
-        PauseConfig.load();
+        TriibuPauseConfig.load();
         context.getSource().sendFeedback(() -> Text.literal("Triibu Pause config reloaded."), true);
         return 1;
     }
 
     private static int setEnabled(CommandContext<ServerCommandSource> context, boolean enabled) {
-        PauseConfig config = PauseConfig.getInstance();
+        TriibuPauseConfig config = TriibuPauseConfig.getInstance();
         config.setEnablePauseWhenEmpty(enabled);
-        PauseConfig.save();
+        TriibuPauseConfig.save();
 
         String status = enabled ? "enabled" : "disabled";
         context.getSource().sendFeedback(() -> Text.literal("Pause when empty is now " + status + "."), true);
@@ -45,16 +45,16 @@ public class PauseCommand {
     }
 
     private static int setInterval(CommandContext<ServerCommandSource> context, int seconds) {
-        PauseConfig config = PauseConfig.getInstance();
+        TriibuPauseConfig config = TriibuPauseConfig.getInstance();
         config.setPauseWhenEmptySeconds(seconds);
-        PauseConfig.save();
+        TriibuPauseConfig.save();
 
         context.getSource().sendFeedback(() -> Text.literal("Pause when empty interval set to " + seconds + " seconds."), true);
         return 1;
     }
 
     private static int showStatus(CommandContext<ServerCommandSource> context) {
-        PauseConfig config = PauseConfig.getInstance();
+        TriibuPauseConfig config = TriibuPauseConfig.getInstance();
         String status = config.isEnablePauseWhenEmpty() ? "enabled" : "disabled";
 
         context.getSource().sendFeedback(() -> Text.literal("Triibu Pause Status:"), false);

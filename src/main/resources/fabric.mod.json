@@ -2,8 +2,8 @@
   "schemaVersion": 1,
   "id": "triibu_pause",
   "version": "${version}",
-  "name": "triibu_pause",
-  "description": "Backports the pauseWhenEmpty functionality to 1.20.1",
+  "name": "Triibu Pause",
+  "description": "Backports the pauseWhenEmpty functionality",
   "authors": [
     "Triibu Nupsik"
   ],
@@ -15,7 +15,7 @@
   "environment": "server",
   "entrypoints": {
     "main": [
-      "me.triibu_pause.Triibu_pause"
+      "me.triibu_pause.TriibuPause"
     ]
   },
   "mixins": [
@@ -24,6 +24,7 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "fabric": "*",
-    "minecraft": "${minecraft_version}"
+    "minecraft": "${minecraft_version}",
+    "java": ">=17"
   }
 }
