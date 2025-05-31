@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -30,6 +31,7 @@ public class TriibuPauseCommand {
 
     private static int reloadConfig(CommandContext<ServerCommandSource> context) {
         TriibuPauseConfig.load();
+        refreshServerConfig(context);
         context.getSource().sendFeedback(() -> Text.literal("Triibu Pause config reloaded."), true);
         return 1;
     }
@@ -38,6 +40,7 @@ public class TriibuPauseCommand {
         TriibuPauseConfig config = TriibuPauseConfig.getInstance();
         config.setEnablePauseWhenEmpty(enabled);
         TriibuPauseConfig.save();
+        refreshServerConfig(context);
 
         String status = enabled ? "enabled" : "disabled";
         context.getSource().sendFeedback(() -> Text.literal("Pause when empty is now " + status + "."), true);
@@ -48,6 +51,7 @@ public class TriibuPauseCommand {
         TriibuPauseConfig config = TriibuPauseConfig.getInstance();
         config.setPauseWhenEmptySeconds(seconds);
         TriibuPauseConfig.save();
+        refreshServerConfig(context);
 
         context.getSource().sendFeedback(() -> Text.literal("Pause when empty interval set to " + seconds + " seconds."), true);
         return 1;
@@ -61,5 +65,15 @@ public class TriibuPauseCommand {
         context.getSource().sendFeedback(() -> Text.literal("- Enabled: " + status), false);
         context.getSource().sendFeedback(() -> Text.literal("- Interval: " + config.getPauseWhenEmptySeconds() + " seconds"), false);
         return 1;
+    }
+
+    /**
+     * Trigger a config refresh in the server
+     */
+    private static void refreshServerConfig(CommandContext<ServerCommandSource> context) {
+        MinecraftServer server = context.getSource().getServer();
+        if (server instanceof PauseManager) {
+            ((PauseManager) server).refreshPauseConfig();
+        }
     }
 }

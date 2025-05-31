@@ -1,5 +1,6 @@
 package me.triibu_pause.mixin;
 
+import me.triibu_pause.PauseManager;
 import me.triibu_pause.TriibuPauseConfig;
 import me.triibu_pause.TriibuPause;
 import net.minecraft.server.MinecraftServer;
@@ -17,7 +18,7 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import java.util.function.BooleanSupplier;
 
 @Mixin(MinecraftServer.class)
-public abstract class MinecraftServerMixin {
+public abstract class MinecraftServerMixin implements PauseManager {
     
     @Shadow private PlayerManager playerManager;
     @Shadow public abstract boolean saveAll(boolean suppressLogs, boolean flush, boolean force);
@@ -25,16 +26,25 @@ public abstract class MinecraftServerMixin {
 
     @Unique
     private int idleTickCount = 0;
-
     @Unique
-    private int getPauseWhenEmptyTicks() {
-        return TriibuPauseConfig.getInstance().getPauseWhenEmptyTicks();
+    private int pauseTicks = -1;
+    @Unique
+    private boolean isPauseEnabled = true;
+    @Unique
+    private int pauseWhenEmptySeconds = -1;
+
+    @Inject(method = "<init>*", at = @At("RETURN"))
+    private void onInit(CallbackInfo ci) {
+        // Load config values when server starts
+        refreshConfig();
+    }
+    @Unique
+    public void refreshConfig() {
+        pauseTicks = TriibuPauseConfig.getInstance().getPauseWhenEmptyTicks();
+        isPauseEnabled = TriibuPauseConfig.getInstance().isEnablePauseWhenEmpty();
+        pauseWhenEmptySeconds = TriibuPauseConfig.getInstance().getPauseWhenEmptySeconds();
     }
 
-    @Unique
-    private boolean isPauseEnabled() {
-        return TriibuPauseConfig.getInstance().isEnablePauseWhenEmpty();
-    }
 
     /**
      * Inject into the tick method to implement pause when empty functionality
@@ -42,11 +52,10 @@ public abstract class MinecraftServerMixin {
      */
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
-        if (!isPauseEnabled()) {
+        if (!isPauseEnabled) {
             return;
         }
 
-        int pauseTicks = getPauseWhenEmptyTicks();
         if (pauseTicks > 0) {
             if (this.playerManager.getCurrentPlayerCount() == 0) {
                 this.idleTickCount++;
@@ -59,7 +68,7 @@ public abstract class MinecraftServerMixin {
                 // Log a message only once when pausing
                 if (this.idleTickCount == pauseTicks) {
                     TriibuPause.LOGGER.info("Server empty for {} seconds, pausing",
-                            TriibuPauseConfig.getInstance().getPauseWhenEmptySeconds());
+                            pauseWhenEmptySeconds);
 
                     // Run an autosave when pausing
                     this.saveAll(true, false, false);
@@ -81,7 +90,6 @@ public abstract class MinecraftServerMixin {
      */
     @Unique
     private void processDedicatedServerCommands() {
-        // Check if this is a dedicated server
         if ((Object)this instanceof MinecraftDedicatedServer) {
             // Cast to MinecraftDedicatedServer and call executeQueuedCommands
             ((MinecraftDedicatedServer)(Object)this).executeQueuedCommands();
