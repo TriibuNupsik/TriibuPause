@@ -13,7 +13,7 @@ import java.nio.file.Path;
 
 public class TriibuPauseConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final String CONFIG_FILE_NAME = "triibu_pause.json";
+    private static final String CONFIG_FILE_NAME = "triibu-pause.json";
     private static TriibuPauseConfig INSTANCE;
 
     // Configuration options
@@ -69,23 +69,22 @@ public class TriibuPauseConfig {
     }
 
     // Getters and Setters
-    public int getPauseWhenEmptySeconds() {
-        return pauseWhenEmptySeconds;
-    }
-
-    public void setPauseWhenEmptySeconds(int pauseWhenEmptySeconds) {
-        this.pauseWhenEmptySeconds = Math.max(1, pauseWhenEmptySeconds); // Minimum 1 second
-    }
-
-    public boolean isEnablePauseWhenEmpty() {
+    public  boolean getEnablePauseWhenEmpty() {
         return enablePauseWhenEmpty;
     }
-
-    public void setEnablePauseWhenEmpty(boolean enablePauseWhenEmpty) {
-        this.enablePauseWhenEmpty = enablePauseWhenEmpty;
+    public  int getPauseWhenEmptySeconds() {
+        return pauseWhenEmptySeconds;
+    }
+    public  int getPauseWhenEmptyTicks() {
+        return pauseWhenEmptySeconds * 20; // Convert seconds to ticks
     }
 
-    public int getPauseWhenEmptyTicks() {
-        return pauseWhenEmptySeconds * 20; // Convert seconds to ticks
+    public  void setPauseWhenEmptySeconds(int pauseWhenEmptySeconds) {
+        this.pauseWhenEmptySeconds = Math.max(1, pauseWhenEmptySeconds); // Minimum 1 second
+        save();
+    }
+    public  void setEnablePauseWhenEmpty(boolean enablePauseWhenEmpty) {
+        this.enablePauseWhenEmpty = enablePauseWhenEmpty;
+        save();
     }
 }

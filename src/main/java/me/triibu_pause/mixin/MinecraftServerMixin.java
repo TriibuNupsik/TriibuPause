@@ -1,6 +1,5 @@
 package me.triibu_pause.mixin;
 
-import me.triibu_pause.PauseManager;
 import me.triibu_pause.TriibuPauseConfig;
 import me.triibu_pause.TriibuPause;
 import net.minecraft.server.MinecraftServer;
@@ -18,7 +17,7 @@ import net.minecraft.server.dedicated.MinecraftDedicatedServer;
 import java.util.function.BooleanSupplier;
 
 @Mixin(MinecraftServer.class)
-public abstract class MinecraftServerMixin implements PauseManager {
+public abstract class MinecraftServerMixin {
     
     @Shadow private PlayerManager playerManager;
     @Shadow public abstract boolean saveAll(boolean suppressLogs, boolean flush, boolean force);
@@ -26,24 +25,6 @@ public abstract class MinecraftServerMixin implements PauseManager {
 
     @Unique
     private int idleTickCount = 0;
-    @Unique
-    private int pauseTicks = -1;
-    @Unique
-    private boolean isPauseEnabled = true;
-    @Unique
-    private int pauseWhenEmptySeconds = -1;
-
-    @Inject(method = "<init>*", at = @At("RETURN"))
-    private void onInit(CallbackInfo ci) {
-        // Load config values when server starts
-        refreshConfig();
-    }
-    @Unique
-    public void refreshConfig() {
-        pauseTicks = TriibuPauseConfig.getInstance().getPauseWhenEmptyTicks();
-        isPauseEnabled = TriibuPauseConfig.getInstance().isEnablePauseWhenEmpty();
-        pauseWhenEmptySeconds = TriibuPauseConfig.getInstance().getPauseWhenEmptySeconds();
-    }
 
 
     /**
@@ -52,11 +33,11 @@ public abstract class MinecraftServerMixin implements PauseManager {
      */
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     private void onTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
-        if (!isPauseEnabled) {
+        if (!TriibuPauseConfig.getInstance().getEnablePauseWhenEmpty()) {
             return;
         }
 
-        if (pauseTicks > 0) {
+        if (TriibuPauseConfig.getInstance().getPauseWhenEmptyTicks() > 0) {
             if (this.playerManager.getCurrentPlayerCount() == 0) {
                 this.idleTickCount++;
             } else {
@@ -64,11 +45,11 @@ public abstract class MinecraftServerMixin implements PauseManager {
             }
 
             // If we've been idle for the configured time, pause the server
-            if (this.idleTickCount >= pauseTicks) {
+            if (this.idleTickCount >= TriibuPauseConfig.getInstance().getPauseWhenEmptyTicks()) {
                 // Log a message only once when pausing
-                if (this.idleTickCount == pauseTicks) {
+                if (this.idleTickCount == TriibuPauseConfig.getInstance().getPauseWhenEmptyTicks()) {
                     TriibuPause.LOGGER.info("Server empty for {} seconds, pausing",
-                            pauseWhenEmptySeconds);
+                            TriibuPauseConfig.getInstance().getPauseWhenEmptySeconds());
 
                     // Run an autosave when pausing
                     this.saveAll(true, false, false);

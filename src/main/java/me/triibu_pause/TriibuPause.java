@@ -15,7 +15,7 @@ public class TriibuPause implements ModInitializer {
         // Load config
         TriibuPauseConfig.load();
 
-        if (TriibuPauseConfig.getInstance().isEnablePauseWhenEmpty()) {
+        if (TriibuPauseConfig.getInstance().getEnablePauseWhenEmpty()) {
             LOGGER.info("Pause when empty is enabled. Server will tick once every {} seconds when no players are online.",
                     TriibuPauseConfig.getInstance().getPauseWhenEmptySeconds());
         } else {
