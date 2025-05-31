@@ -28,7 +28,7 @@ public class PauseConfig {
     }
 
     public static void load() {
-        Path configDir = FabricLoader.getInstance().getConfigDir().resolve(Triibu_pause.MOD_ID);
+        Path configDir = FabricLoader.getInstance().getConfigDir();
         try {
             if (!Files.exists(configDir)) {
                 Files.createDirectories(configDir);
@@ -52,7 +52,7 @@ public class PauseConfig {
     }
 
     public static void save() {
-        Path configDir = FabricLoader.getInstance().getConfigDir().resolve(Triibu_pause.MOD_ID);
+        Path configDir = FabricLoader.getInstance().getConfigDir();
         try {
             if (!Files.exists(configDir)) {
                 Files.createDirectories(configDir);

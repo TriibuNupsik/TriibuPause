@@ -4,7 +4,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import me.triibu_pause.PauseConfig;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
@@ -30,7 +29,7 @@ public class PauseCommand {
     }
 
     private static int reloadConfig(CommandContext<ServerCommandSource> context) {
-        context.load();
+        PauseConfig.load();
         context.getSource().sendFeedback(() -> Text.literal("Triibu Pause config reloaded."), true);
         return 1;
     }
