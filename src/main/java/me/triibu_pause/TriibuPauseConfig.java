@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025. Triibunupsik
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package me.triibu_pause;
 
 import com.google.gson.Gson;
@@ -13,7 +18,7 @@ import java.nio.file.Path;
 
 public class TriibuPauseConfig {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-    private static final String CONFIG_FILE_NAME = "triibu-pause.json";
+    private static final String CONFIG_FILE_NAME = "auto-pause.json";
     private static TriibuPauseConfig INSTANCE;
 
     // Configuration options
@@ -38,15 +43,15 @@ public class TriibuPauseConfig {
             if (configFile.exists()) {
                 try (FileReader reader = new FileReader(configFile)) {
                     INSTANCE = GSON.fromJson(reader, TriibuPauseConfig.class);
-                    TriibuPause.LOGGER.info("Loaded config file for Triibu Pause");
+                    //TriibuPause.LOGGER.info("Loaded config file for Auto Pause");
                 }
             } else {
                 INSTANCE = new TriibuPauseConfig();
                 save();
-                TriibuPause.LOGGER.info("Created default config for Triibu Pause");
+                //TriibuPause.LOGGER.info("Created default config for Auto Pause");
             }
         } catch (IOException e) {
-            TriibuPause.LOGGER.error("Failed to load config for Triibu Pause", e);
+            TriibuPause.LOGGER.error("Failed to load config for Auto Pause", e);
             INSTANCE = new TriibuPauseConfig();
         }
     }
@@ -61,10 +66,10 @@ public class TriibuPauseConfig {
             File configFile = configDir.resolve(CONFIG_FILE_NAME).toFile();
             try (FileWriter writer = new FileWriter(configFile)) {
                 GSON.toJson(INSTANCE, writer);
-                TriibuPause.LOGGER.info("Saved config for Triibu Pause");
+                //TriibuPause.LOGGER.info("Saved config for Auto Pause");
             }
         } catch (IOException e) {
-            TriibuPause.LOGGER.error("Failed to save config for Triibu Pause", e);
+            TriibuPause.LOGGER.error("Failed to save config for Auto Pause", e);
         }
     }
 

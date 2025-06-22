@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025. Triibunupsik
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package me.triibu_pause.mixin;
 
 import org.objectweb.asm.tree.ClassNode;

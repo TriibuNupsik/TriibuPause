@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2025. Triibunupsik
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package me.triibu_pause;
 
 import com.mojang.brigadier.CommandDispatcher;
@@ -30,7 +35,7 @@ public class TriibuPauseCommand {
 
     private static int reloadConfig(CommandContext<ServerCommandSource> context) {
         TriibuPauseConfig.load();
-        context.getSource().sendFeedback(() -> Text.literal("Triibu Pause config reloaded."), true);
+        context.getSource().sendFeedback(() -> Text.literal("Auto Pause config reloaded."), true);
         return 1;
     }
 
@@ -54,7 +59,7 @@ public class TriibuPauseCommand {
     private static int showStatus(CommandContext<ServerCommandSource> context) {
         String status = TriibuPauseConfig.getInstance().getEnablePauseWhenEmpty() ? "enabled" : "disabled";
 
-        context.getSource().sendFeedback(() -> Text.literal("Triibu Pause Status:"), false);
+        context.getSource().sendFeedback(() -> Text.literal("Auto Pause Status:"), false);
         context.getSource().sendFeedback(() -> Text.literal("- Enabled: " + status), false);
         context.getSource().sendFeedback(() -> Text.literal("- Interval: " + TriibuPauseConfig.getInstance().getPauseWhenEmptySeconds() + " seconds"), false);
         return 1;
