@@ -16,15 +16,15 @@ public class TriibuPause implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        LOGGER.info("Initializing Triibu Pause When Empty");
-        // Load config
+        LOGGER.debug("Initializing Auto Pause");
+
         TriibuPauseConfig.load();
 
         if (TriibuPauseConfig.getInstance().getEnablePauseWhenEmpty()) {
-            LOGGER.info("Pause when empty is enabled. Server will tick once every {} seconds when no players are online.",
+            LOGGER.info("Auto Pause is enabled. Server will pause after {} seconds when no players are online.",
                     TriibuPauseConfig.getInstance().getPauseWhenEmptySeconds());
         } else {
-            LOGGER.info("Pause when empty is disabled.");
+            LOGGER.info("Auto Pause is disabled.");
         }
 
         // Register command

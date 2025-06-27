@@ -43,12 +43,12 @@ public class TriibuPauseConfig {
             if (configFile.exists()) {
                 try (FileReader reader = new FileReader(configFile)) {
                     INSTANCE = GSON.fromJson(reader, TriibuPauseConfig.class);
-                    //TriibuPause.LOGGER.info("Loaded config file for Auto Pause");
+                    TriibuPause.LOGGER.debug("Loaded config file for Auto Pause");
                 }
             } else {
                 INSTANCE = new TriibuPauseConfig();
                 save();
-                //TriibuPause.LOGGER.info("Created default config for Auto Pause");
+                TriibuPause.LOGGER.debug("Created default config for Auto Pause");
             }
         } catch (IOException e) {
             TriibuPause.LOGGER.error("Failed to load config for Auto Pause", e);
@@ -66,7 +66,7 @@ public class TriibuPauseConfig {
             File configFile = configDir.resolve(CONFIG_FILE_NAME).toFile();
             try (FileWriter writer = new FileWriter(configFile)) {
                 GSON.toJson(INSTANCE, writer);
-                //TriibuPause.LOGGER.info("Saved config for Auto Pause");
+                TriibuPause.LOGGER.debug("Saved config for Auto Pause");
             }
         } catch (IOException e) {
             TriibuPause.LOGGER.error("Failed to save config for Auto Pause", e);

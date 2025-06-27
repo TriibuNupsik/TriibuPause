@@ -41,7 +41,6 @@ public class TriibuPauseCommand {
 
     private static int setEnabled(CommandContext<ServerCommandSource> context, boolean enabled) {
         TriibuPauseConfig.getInstance().setEnablePauseWhenEmpty(enabled);
-        TriibuPauseConfig.save();
 
         String status = enabled ? "enabled" : "disabled";
         context.getSource().sendFeedback(() -> Text.literal("Pause when empty is now " + status + "."), true);
@@ -50,7 +49,6 @@ public class TriibuPauseCommand {
 
     private static int setInterval(CommandContext<ServerCommandSource> context, int seconds) {
         TriibuPauseConfig.getInstance().setPauseWhenEmptySeconds(seconds);
-        TriibuPauseConfig.save();
 
         context.getSource().sendFeedback(() -> Text.literal("Pause when empty interval set to " + seconds + " seconds."), true);
         return 1;
